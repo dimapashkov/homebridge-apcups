@@ -18,7 +18,7 @@ export class ApcUpsHomebridgePlatform implements DynamicPlatformPlugin {
   constructor(
     public readonly log: Logger,
     public readonly config: PlatformConfig,
-    public readonly api: API,
+    public readonly api: API
   ) {
     this.log.debug('Finished initializing platform:', this.config.name);
 

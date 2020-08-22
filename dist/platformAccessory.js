@@ -75,7 +75,7 @@ class UpsBatteryServiceAccessory {
         };
         const batteryLevel = getBatteryLevel();
         this.currentStatus = {
-            batteryLevel: batteryLevel,
+            batteryLevel,
             isCharging: (batteryLevel < 100 && (this.lastStatus && this.lastStatus.batteryLevel > 0 && this.lastStatus.batteryLevel < batteryLevel)),
             isLowBattery: batteryLevel < 10,
         };
