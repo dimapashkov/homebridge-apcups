@@ -17,6 +17,7 @@ class UpsBatteryServiceAccessory {
         this.config = config;
         this.api = api;
         this.accessory = accessory;
+        this.log.info('Low Battery Threshold: ' + this.config.lowBattery);
         this.batteryService = this.accessory.getService(this.platform.Service.BatteryService) || this.accessory.addService(this.platform.Service.BatteryService);
         // set HomeKit accessory name
         this.batteryService.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
@@ -28,11 +29,6 @@ class UpsBatteryServiceAccessory {
             .on('get', this.handleChargingStateGet.bind(this));
         this.batteryService.getCharacteristic(Characteristic.StatusLowBattery)
             .on('get', this.handleStatusLowBatteryGet.bind(this));
-        // set accessory information
-        // this.accessory.getService(this.platform.Service.AccessoryInformation)!
-        //   .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Default-Manufacturer')
-        //   .setCharacteristic(this.platform.Characteristic.Model, 'Default-Model')
-        //   .setCharacteristic(this.platform.Characteristic.SerialNumber, 'Default-Serial');
         this.currentStatus = {
             batteryLevel: 0,
             isCharging: false,
@@ -44,6 +40,7 @@ class UpsBatteryServiceAccessory {
             apcAccessClient.connect('127.0.0.1', '3551').then(() => {
                 return apcAccessClient.getStatusJson();
             }).then((result) => {
+                // this.log.info(result);      
                 apcAccessConnected = true;
                 this.processStatus(result);
             }).catch((err) => {
@@ -63,10 +60,18 @@ class UpsBatteryServiceAccessory {
         }, 5000);
     }
     processStatus(result) {
+        // this.log.info(result.FIRMWARE);
         this.lastStatus = this.currentStatus;
         // STATUS: string, // ONLINE / ONBATT
         // BCHARGE: string, // '100.0 Percent'
         // TIMELEFT: string, // '36.4 Minutes'
+        // set accessory information
+        this.accessory.getService(this.platform.Service.AccessoryInformation)
+            .setCharacteristic(this.platform.Characteristic.Manufacturer, 'APC')
+            .setCharacteristic(this.platform.Characteristic.Model, result.MODEL)
+            .setCharacteristic(this.platform.Characteristic.SerialNumber, result.SERIALNO)
+            .setCharacteristic(this.platform.Characteristic.FirmwareRevision, result.FIRMWARE)
+            .setCharacteristic(this.platform.Characteristic.HardwareRevision, result.FIRMWARE);
         const getBatteryLevel = () => {
             const percentage = parseFloat(result.BCHARGE.split(' ')[0]);
             if ((!isNaN(percentage)) && (0 <= percentage) && (percentage <= 100))
@@ -77,7 +82,7 @@ class UpsBatteryServiceAccessory {
         this.currentStatus = {
             batteryLevel,
             isCharging: (batteryLevel < 100 && (this.lastStatus && this.lastStatus.batteryLevel > 0 && this.lastStatus.batteryLevel < batteryLevel)),
-            isLowBattery: batteryLevel < 10,
+            isLowBattery: batteryLevel < this.config.lowBattery,
         };
     }
     /**
