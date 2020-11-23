@@ -8,7 +8,7 @@ export interface ApcupsdSchema {
   // DRIVER: 'USB UPS Driver',
   // UPSMODE: string; // 'Stand Alone',
   // STARTTIME: '2017-04-28 12:04:47 +0200  ',
-  // MODEL: 'Back-UPS ES 700G ',
+  MODEL: string,
   STATUS: string, // 'ONLINE ', // ONBATT
   // LINEV: '232.0 Volts',
   // LOADPCT: '5.0 Percent',
@@ -28,10 +28,10 @@ export interface ApcupsdSchema {
   // CUMONBATT: '0 Seconds',
   // XOFFBATT: 'N/A',
   // STATFLAG: '0x05000008',
-  // SERIALNO: '5B1325T16968  ',
+  SERIALNO: string,
   // BATTDATE: '2013-06-23',
   // NOMINV: '230 Volts',
   // NOMBATTV: '12.0 Volts',
-  // FIRMWARE: '871.O2 .I USB FW:O2',
+  FIRMWARE: string,
   // 'END APC': '2017-04-30 13:47:10 +0200  '
 }
