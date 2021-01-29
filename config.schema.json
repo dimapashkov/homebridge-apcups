@@ -10,7 +10,14 @@
         "type": "string",
         "required": true,
         "default": "UPS Platform"
+      },
+      "lowBattery": {
+        "title": "Low Battery Threshold",
+        "type": "number",
+        "required": true,
+        "default": "10"
       }
+
     }
   }
 }
